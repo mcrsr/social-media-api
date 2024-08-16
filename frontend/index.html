@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media API Frontend</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#" id="home-link">Home</a></li>
+                <li><a href="#" id="posts-link">Posts</a></li>
+                <li><a href="#" id="users-link">Users</a></li>
+                <li><a href="#" id="messages-link">Messages</a></li>
+                <li><a href="#" id="logout-link">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="main-content">
+        <section id="auth-section">
+            <h2>Login / Register</h2>
+            <form id="auth-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit" id="auth-button">Login</button>
+                <button type="button" id="register-button">Register</button>
+            </form>
+        </section>
+        <section id="posts-section" class="hidden">
+            <h2>Posts</h2>
+            <form id="post-form">
+                <input type="text" id="post-content" placeholder="Post content" required>
+                <button type="submit">Create Post</button>
+            </form>
+            <div id="posts-list"></div>
+        </section>
+        <section id="users-section" class="hidden">
+            <h2>Users</h2>
+            <div id="users-list"></div>
+        </section>
+        <section id="messages-section" class="hidden">
+            <h2>Messages</h2>
+            <form id="message-form">
+                <input type="text" id="receiver-id" placeholder="Receiver ID" required>
+                <textarea id="message-content" placeholder="Message" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+            <div id="messages-list"></div>
+        </section>
+    </main>
+    <script src="scripts.js"></script>
+</body>
+</html>

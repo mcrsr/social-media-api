@@ -1,0 +1,75 @@
+Authentication
+Register User
+
+POST /register: Register a new user.
+Login User
+
+POST /login: Authenticate a user and get a JWT token.
+User Management
+Get User by ID
+
+GET /users/{id}: Retrieve details of a specific user.
+Get All Users
+
+GET /users: Retrieve a list of all users.
+Update User
+
+PUT /users/{id}: Update user information (username, profile picture, bio, and password).
+Post Management
+Create Post
+
+POST /posts: Create a new post.
+Get All Posts
+
+GET /posts: Retrieve a list of all posts.
+Get Post by ID
+
+GET /posts/{postId}: Retrieve details of a specific post.
+Update Post
+
+PUT /posts/{postId}: Update a specific post.
+Delete Post
+
+DELETE /posts/{postId}: Delete a specific post.
+Like Post
+
+POST /posts/{postId}/like: Like a specific post.
+Unlike Post
+
+DELETE /posts/{postId}/unlike: Unlike a specific post.
+Comment Management
+Add Comment
+
+POST /posts/{postId}/comments: Add a comment to a post.
+Get Comments
+
+GET /posts/{postId}/comments: Retrieve comments for a specific post.
+Delete Comment
+
+DELETE /comments/{commentId}: Delete a specific comment.
+Follower Management
+Follow User
+
+POST /users/{userId}/follow: Follow a user.
+Unfollow User
+
+DELETE /users/{userId}/unfollow: Unfollow a user.
+Message Management
+Send Message
+
+POST /users/{receiverId}/messages: Send a message to a user.
+Get Messages
+
+GET /users/{userId}/messages: Retrieve messages for a user.
+Search Functionality
+Search Users
+
+GET /search/users: Search for users based on a query string.
+Search Posts
+
+GET /search/posts: Search for posts based on a query string.
+Security and Rate Limiting
+Bearer Authentication: Uses JWT for securing endpoints.
+Rate Limiting: Limits the number of requests from a single IP to prevent abuse.
+Error Handling
+Error Handler: Custom middleware to log and handle errors.

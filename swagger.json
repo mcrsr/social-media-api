@@ -1,0 +1,898 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Social Media API",
+      "version": "1.0.0",
+      "description": "API documentation for the Social Media platform."
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000/api",
+        "description": "Local server"
+      }
+    ],
+    "paths": {
+      "/register": {
+        "post": {
+          "summary": "Register a new user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "password": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["username", "email", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "User registered successfully"
+            },
+            "400": {
+              "description": "Bad request"
+            }
+          }
+        }
+      },
+      "/login": {
+        "post": {
+          "summary": "Login a user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "password": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["email", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Login successful"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          }
+        }
+      },
+      "/users": {
+        "get": {
+          "summary": "Get all users",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of users",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "profile_picture": {
+                          "type": "string"
+                        },
+                        "bio": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          }
+        }
+      },
+      "/users/{id}": {
+        "get": {
+          "summary": "Get a specific user",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User details",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "username": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string",
+                        "format": "email"
+                      },
+                      "profile_picture": {
+                        "type": "string"
+                      },
+                      "bio": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "User not found"
+            }
+          }
+        },
+        "put": {
+          "summary": "Update a specific user",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "profile_picture": {
+                      "type": "string"
+                    },
+                    "bio": {
+                      "type": "string"
+                    },
+                    "password": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "User updated successfully"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "User not found"
+            }
+          }
+        }
+      },
+      "/posts": {
+        "get": {
+          "summary": "Get all posts",
+          "parameters": [
+            {
+              "name": "page",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "default": 1
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "default": 10
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of posts",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "user_id": {
+                          "type": "integer"
+                        },
+                        "content": {
+                          "type": "string"
+                        },
+                        "media_url": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          }
+        },
+        "post": {
+          "summary": "Create a new post",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "string"
+                    },
+                    "media_url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["content"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Post created successfully"
+            },
+            "400": {
+              "description": "Bad request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          }
+        }
+      },
+      "/posts/{postId}": {
+        "get": {
+          "summary": "Get a specific post",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Post details",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "user_id": {
+                        "type": "integer"
+                      },
+                      "content": {
+                        "type": "string"
+                      },
+                      "media_url": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Post not found"
+            }
+          }
+        },
+        "put": {
+          "summary": "Update a specific post",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "string"
+                    },
+                    "media_url": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Post updated successfully"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Post not found"
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete a specific post",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Post deleted successfully"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Post not found"
+            }
+          }
+        }
+      },
+      "/posts/{postId}/like": {
+        "post": {
+          "summary": "Like a post",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Post liked successfully"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Post not found"
+            }
+          }
+        }
+      },
+      "/posts/{postId}/unlike": {
+        "delete": {
+          "summary": "Unlike a post",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Post unliked successfully"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Post not found"
+            }
+          }
+        }
+      },
+      "/posts/{postId}/comments": {
+        "post": {
+          "summary": "Add a comment to a post",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["content"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Comment added successfully"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Post not found"
+            }
+          }
+        },
+        "get": {
+          "summary": "Get comments for a post",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of comments",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "user_id": {
+                          "type": "integer"
+                        },
+                        "post_id": {
+                          "type": "integer"
+                        },
+                        "content": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Post not found"
+            }
+          }
+        }
+      },
+      "/comments/{commentId}": {
+        "delete": {
+          "summary": "Delete a comment",
+          "parameters": [
+            {
+              "name": "commentId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Comment deleted successfully"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Comment not found"
+            }
+          }
+        }
+      },
+      "/users/{userId}/follow": {
+        "post": {
+          "summary": "Follow a user",
+          "parameters": [
+            {
+              "name": "userId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User followed successfully"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "User not found"
+            }
+          }
+        }
+      },
+      "/users/{userId}/unfollow": {
+        "delete": {
+          "summary": "Unfollow a user",
+          "parameters": [
+            {
+              "name": "userId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User unfollowed successfully"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "User not found"
+            }
+          }
+        }
+      },
+      "/users/{receiverId}/messages": {
+        "post": {
+          "summary": "Send a message to a user",
+          "parameters": [
+            {
+              "name": "receiverId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["content"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Message sent successfully"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Receiver not found"
+            }
+          }
+        }
+      },
+      "/users/{userId}/messages": {
+        "get": {
+          "summary": "Get messages for a user",
+          "parameters": [
+            {
+              "name": "userId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of messages",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "sender_id": {
+                          "type": "integer"
+                        },
+                        "receiver_id": {
+                          "type": "integer"
+                        },
+                        "content": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "User not found"
+            }
+          }
+        }
+      },
+      "/search/users": {
+        "get": {
+          "summary": "Search for users",
+          "parameters": [
+            {
+              "name": "q",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of matching users",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "BearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }  
