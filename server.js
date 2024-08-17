@@ -14,16 +14,18 @@ dotenv.config();
 const app = express();
 
 // Configure CORS
-const corsOptions = {
-    origin: 'http://your-frontend-domain.com', // Replace with your frontend domain
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-};
+// const corsOptions = {
+//     origin: '*', // Replace with your frontend domain
+//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//     credentials: true,
+// };
 
 // Apply request logging
+
+app.use(cors());
 app.use(requestLogger);
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 
