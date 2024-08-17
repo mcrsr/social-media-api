@@ -36,3 +36,15 @@ exports.deleteComment = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.updateComment = async (req, res) => {
+    const { content } = req.body;
+    if(!content) return res.status(400).json({"message":"required filed content missing."});
+    const userId = req.user.id;
+    try {
+        await query('UPDATE Comments SET content = ?, user_id = ? WHERE id = ?', [content, userId, req.params.commentId]);
+        res.status(200).json({ message: 'Comment updated successfully!' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};

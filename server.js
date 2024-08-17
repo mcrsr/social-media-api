@@ -7,7 +7,7 @@ const errorHandler = require('./middleware/errorHandler');
 const apiLimiter = require('./middleware/rateLimiter');
 const cors = require('cors');
 const { requestLogger } = require('./middleware/logger');
-
+const helmet = require('helmet');
 
 dotenv.config();
 
@@ -24,6 +24,7 @@ const app = express();
 
 app.use(cors());
 app.use(requestLogger);
+app.use(helmet());
 
 // app.use(cors(corsOptions));
 

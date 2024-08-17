@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Messages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0 0 20px;
+            color: #333;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+        }
+
+        .message p {
+            margin: 0;
+        }
+
+        .message .sender {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .message .content {
+            margin-top: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .no-messages {
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>My Posts</h1>
+        <p>Welcome to the posts page. Here you can find all the latest posts.</p>
+    </header>
+
+    <div class="buttons">
+        <button id="create-post" onclick="window.location.href='./create-post.html'">Create a Post</button>
+        <button id="logout" onclick="logout()">Logout</button>
+        <button id="sendMessage" onclick="window.location.href='./send-message.html'">Send Message</button>
+    </div>
+
+    <div class="container">
+        <h1>Received Messages</h1>
+        <div id="messagesContainer">
+            <!-- Messages will be injected here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const apiEndpoint = 'http://127.0.0.1:3000/api/users/messages/all';
+        const token = localStorage.getItem('token');
+
+        async function fetchMessages() {
+            try {
+                const response = await fetch(apiEndpoint, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const messages = await response.json();
+
+                const messagesContainer = document.getElementById('messagesContainer');
+
+                if (messages.length === 0) {
+                    messagesContainer.innerHTML = '<p class="no-messages">No messages found.</p>';
+                    return;
+                }
+
+                messagesContainer.innerHTML = messages.map(message => `
+                    <div class="message">
+                        <p class="sender">From User ID: ${message.sender_id}</p>
+                        <p class="receiver">To User ID: ${message.receiver_id}</p>
+                        <p class="created_at">At: ${message.created_at}</p>
+                        <p class="content">${message.content}</p>
+                        <button onclick="window.location.href='./send-message.html?receiver_id=${message.sender_id}'">Reply</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.log(error);
+                document.getElementById('messagesContainer').innerHTML = '<p class="no-messages">Error loading messages. Please try again later.</p>';
+            }
+        }
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.replace('./login.html');
+        }
+        document.addEventListener('DOMContentLoaded', fetchMessages);
+    </script>
+</body>
+
+</html>

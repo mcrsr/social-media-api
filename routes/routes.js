@@ -3,9 +3,9 @@ const { register, login } = require('../controllers/authController');
 const { getUser, updateUser,getUsers } = require('../controllers/userController');
 const { createPost, getPosts, getPostById, updatePost, deletePost } = require('../controllers/postController');
 const { likePost, unlikePost } = require('../controllers/likeController');
-const { addComment, getComments, deleteComment } = require('../controllers/commentController');
+const { addComment, getComments, deleteComment, updateComment } = require('../controllers/commentController');
 const { followUser, unfollowUser } = require('../controllers/followerController');
-const { sendMessage, getMessages } = require('../controllers/messageController');
+const { getMessages,getMessagesByOtherUserId,sendMessage } = require('../controllers/messageController');
 const { searchUsers, searchPosts } = require('../controllers/searchController');
 const authenticateToken = require('../middleware/authMiddleware');
 const {isPostOwner, isCommetOwner} = require('../middleware/authorizationMiddleware');
@@ -39,6 +39,7 @@ router.delete('/posts/:postId/unlike', authenticateToken, unlikePost);
 router.post('/posts/:postId/comments', authenticateToken, addComment);
 router.get('/posts/:postId/comments', authenticateToken, getComments);
 router.delete('/comments/:commentId', authenticateToken,isCommetOwner, deleteComment);
+router.put('/comments/:commentId', authenticateToken,isCommetOwner, updateComment);
 
 // Follower Routes
 router.post('/users/:userId/follow', authenticateToken, followUser);
@@ -46,7 +47,7 @@ router.delete('/users/:userId/unfollow', authenticateToken, unfollowUser);
 
 // Message Routes
 router.post('/users/:receiverId/messages', authenticateToken, sendMessage);
-router.get('/users/:userId/messages', authenticateToken, getMessages);
+router.get('/users/messages/all', authenticateToken, getMessages);
 
 // Search Routes
 router.get('/search/users', authenticateToken, searchUsers);

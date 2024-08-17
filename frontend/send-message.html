@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Message</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0 0 20px;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>My Posts</h1>
+        <p>Welcome to the posts page. Here you can find all the latest posts.</p>
+    </header>
+
+    <div class="buttons">
+        <button id="create-post" onclick="window.location.href='./create-post.html'">Create a Post</button>
+        <button id="logout" onclick="logout()">Logout</button>
+        <button id="viewMessages" onclick="window.location.href='./view-messages.html'">View Messages</button>
+    </div>
+
+    <div class="container">
+        <h1>Send a Message</h1>
+        <form id="sendMessageForm">
+            <label for="receiverId">Receiver User ID:</label>
+            <input type="text" id="receiverId" placeholder="Enter the receiver's User ID" required />
+
+            <label for="messageContent">Message Content:</label>
+            <textarea id="messageContent" rows="4" placeholder="Type your message here..." required></textarea>
+
+            <button type="submit">Send Message</button>
+            <p id="statusMessage" class="error"></p>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('sendMessageForm');
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const receiverIdFromUrl = urlParams.get('receiver_id');
+        console.log("receiverIdFromUrl");
+        console.log(receiverIdFromUrl);
+        document.getElementById('receiverId').value = receiverIdFromUrl
+
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const receiverId = document.getElementById('receiverId').value;
+            const content = document.getElementById('messageContent').value;
+            const token = localStorage.getItem('token');
+
+            try {
+                const response = await fetch(`http://127.0.0.1:3000/api/users/${receiverId}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ content })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    document.getElementById('statusMessage').textContent = error.message || 'Failed to send message.';
+                    return;
+                }
+
+                document.getElementById('statusMessage').textContent = 'Message sent successfully!';
+                document.getElementById('sendMessageForm').reset();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('statusMessage').textContent = 'Internal Server Error!';
+            }
+        });
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.replace('./login.html');
+        }
+    </script>
+</body>
+
+</html>

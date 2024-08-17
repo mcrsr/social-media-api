@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #333;
+        }
+
+        .header p {
+            color: #777;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .buttons button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #create-post,
+        #sendMessage,
+        #viewMessages {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .updateButton {
+            background-color: #007bff;
+            color: white;
+            margin: 0 10px;
+            padding: 8px 16px;
+            font-size: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .deleteButton {
+            background-color: hsla(347, 100%, 50%, 0.886);
+            color: white;
+            margin: 0 10px;
+            padding: 8px 16px;
+            font-size: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #create-post:hover {
+            background-color: #0056b3;
+        }
+
+        #logout {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        #logout:hover {
+            background-color: #a71d2a;
+        }
+
+        .post-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .post {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .post h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .post h6 {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .comment-section {
+            margin-top: 20px;
+        }
+
+        .comment-section textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        .comment-section button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .comment-section button:hover {
+            background-color: #218838;
+        }
+
+        .comments {
+            margin-top: 15px;
+            background-color: #f8f8f8;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .comments p {
+            margin: 5px 0;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>Comments</h1>
+        <p>Welcome to the comments page. Here you can find all the latest comments for the posts.</p>
+    </header>
+
+    <div class="buttons">
+        <button id="create-post" onclick="window.location.href='./posts.html'">Posts</button>
+        <button id="create-post" onclick="window.location.href='./create-post.html'">Create a Post</button>
+        <button id="logout" onclick="logout()">Logout</button>
+        <button id="sendMessage" onclick="window.location.href='./send-message.html'">Send Message</button>
+        <button id="viewMessages" onclick="window.location.href='./view-messages.html'">View Messages</button>
+    </div>
+
+    <div class="post-container" id="postContainer">
+        <!-- Posts will be injected here by JavaScript -->
+    </div>
+
+    <script>
+        const apiEndpoint = 'http://127.0.0.1:3000/api';
+        const apiToken = localStorage.getItem('token');
+        let postsFetched = false;
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const postId = urlParams.get('postId');
+
+        async function fetchComments() {
+
+            try {
+                const response = await fetch(apiEndpoint + `/posts/${postId}/comments`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const posts = await response.json();
+
+                const postContainer = document.getElementById('postContainer');
+
+                if (posts.length === 0) {
+                    postContainer.innerHTML = '<p>No Comments available for the Post.</p>';
+                    postsFetched = true;
+                    return;
+                }
+
+                posts.forEach(post => {
+                    const postElement = document.createElement('div');
+                    postElement.className = 'post';
+                    postElement.innerHTML = `
+                        <h6 class="post-user">User ID: ${post.user_id}</h6>
+                        <h6 class="post-createdAt">Created At: ${post.created_at}</h6>
+                        <h1 class="post-body">${post.content}</h1>
+                        <button class="updateButton" onClick="updateComment(${post.id},'${post.content}')">Update</button>
+                        <button class="deleteButton" onClick="deleteComment(${post.id})">Delete</button>
+                    `;
+                    postContainer.appendChild(postElement);
+                });
+
+                postsFetched = true;
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+                const postContainer = document.getElementById('postContainer');
+                postContainer.innerHTML = '<p>Error loading posts. Please try again later.</p>';
+            }
+        }
+
+        async function deleteComment(commentId) {
+            const result = confirm(`Are Sure to delete this comment: ${commentId}`);
+            if (result) {
+                try {
+                    const response = await fetch(apiEndpoint + `/comments/${commentId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${apiToken}`
+                        }
+                    });
+                    const data = await response.json();
+                    if(data.message.includes(`Comment deleted successfully!`)){
+                        alert(`Comment deleted successfully!`);
+                        location.reload();
+                    }else{
+                        alert(JSON.stringify(data));
+                    }
+                } catch (error) {
+                    alert(JSON.stringify(error));
+                }
+            }
+        }
+
+        async function updateComment(commentId,commentContent) {
+            let content = prompt("Please enter your name", commentContent);
+            try {
+                    const response = await fetch(apiEndpoint + `/comments/${commentId}`, {
+                        method: 'PUT',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiToken}`
+                    },
+                    body: JSON.stringify({
+                        content
+                    })
+                    });
+                    const data = await response.json();
+                    if(data.message.includes(`Comment updated successfully!`)){
+                        alert(`Comment updated successfully!`);
+                        location.reload();
+                    }else{
+                        alert(JSON.stringify(data));
+                    }
+                } catch (error) {
+                    alert(JSON.stringify(error));
+                }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.replace('./login.html');
+        }
+        document.addEventListener('DOMContentLoaded', fetchComments);
+    </script>
+</body>
+
+</html>
